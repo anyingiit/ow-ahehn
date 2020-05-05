@@ -1,6 +1,7 @@
 '''
 更新记录
-2020年5月6日01:05:55 EJNJE
+V0.68   2020年5月6日01:05:55 EJNJE
+V0.7    2020年5月6日01:37:36 9D1MH
 '''
 #GLobal privte
 globalvar i
@@ -175,7 +176,11 @@ if eventPlayer.isInSpawnRoom() and not eventPlayer.firstInGameTips:
     smallMessage(eventPlayer,"游戏准备完毕, 祝您游玩愉快!")
     eventPlayer.firstInGameTips = true
     
-
+@Rule "玩家被杀手杀死提示"
+@Event playerDied
+if victim.deathCause == 2:
+    wait(2.5)
+    smallMessage(victim,"您刚刚被他人暗杀...")
 @Rule "[多行文本]快捷键提示(全局)"
 @Event global
 hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"当前游戏模式:{0}{1}".format("(自动)" if GameDefaultMode == 0 else "", "正常模式" if gameMode == 1 else null + "白名单模式" if gameMode == 2 else null + "黑名单模式" if gameMode == 3 else null),HudPosition.LEFT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
