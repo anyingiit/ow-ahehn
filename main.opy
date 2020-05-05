@@ -10,9 +10,8 @@ globalvar k
 globalvar gameMode
 globalvar hitList
 globalvar whiteAndBlackList
-globalvar whiteAndBlackListIndex #白名单或黑名单相对于全部英雄的索引位置
 globalvar whiteListAndBlackListMaxLength
-globalvar allHeroes
+
 
 #Global Config
 globalvar GameDefaultMode #[0-defalt]auto [1]normal [2]whiteList [3]blackList
@@ -37,7 +36,7 @@ disableInspector()
 
 @Rule "[自定义]游戏运行模式: (默认)[0]自动 [1]无修改 [2]白名单模式 [3]黑名单模式"
 @Event global
-GameDefaultMode = 0
+GameDefaultMode = 2
 
 @Rule "[自定义]白名单&黑名单转换英雄类型 (默认)[0]平均分配 [1]随机"
 @Event global
@@ -45,7 +44,7 @@ WhiteListAndBlackListShiftType = 0
 
 @Rule "[自定义]白名单&黑名单默认最大人数: [0]随机 (默认)[>0]使用该值"
 @Event global
-WhiteAndBlackListDftMaxLength = 3
+WhiteAndBlackListDftMaxLength = 20
 
 @Rule "[自定义]白名单默认最大人数: (默认)[0]使用默认最大人数 [>0]使用该值"
 @Event global
@@ -63,9 +62,6 @@ PlayerMaxPower = 3
 @Event global
 #数组初始化
 whiteAndBlackList = []
-allHeroes = []
-for i in range(0,len(getAllHeroes())):
-    allHeroes[i] = getAllHeroes()[i]
 #文本初始化
 hudSubtext([p for p in getAllPlayers() if not p.isHoldingButton(Button.INTERACT)],"按下互动键(F)查看快捷键说明",HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 #游戏模式类型初始化
@@ -164,8 +160,36 @@ if eventPlayer.inHitList and eventPlayer.allowKillLimit > 0 and eventPlayer.isHo
 hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"当前游戏模式:{0}{1}".format("(自动)" if GameDefaultMode == 0 else "", "正常模式" if gameMode == 1 else null + "白名单模式" if gameMode == 2 else null + "黑名单模式" if gameMode == 3 else null),HudPosition.LEFT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 if gameMode>=2 and gameMode <=3:
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"{0}列表:".format("白名单" if gameMode == 2 else null + "黑名单" if gameMode == 3 else null),HudPosition.LEFT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-    for i in range(0,len(whiteAndBlackList)):
-        j = whiteAndBlackList[i]
-        wait(0.5)
-        hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],k,HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-        wait(0.5)
+
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ANA in whiteAndBlackList],"   {0}".format(Hero.ANA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ASHE in whiteAndBlackList],"   {0}".format(Hero.ASHE),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.BAPTISTE in whiteAndBlackList],"   {0}".format(Hero.BAPTISTE),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.BASTION in whiteAndBlackList],"   {0}".format(Hero.BASTION),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.BRIGITTE in whiteAndBlackList],"   {0}".format(Hero.BRIGITTE),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.DOOMFIST in whiteAndBlackList],"   {0}".format(Hero.DOOMFIST),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.DVA in whiteAndBlackList],"   {0}".format(Hero.DVA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ECHO in whiteAndBlackList],"   {0}".format(Hero.ECHO),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.GENJI in whiteAndBlackList],"   {0}".format(Hero.GENJI),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.HAMMOND in whiteAndBlackList],"   {0}".format(Hero.HAMMOND),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.HANZO in whiteAndBlackList],"   {0}".format(Hero.HANZO),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.JUNKRAT in whiteAndBlackList],"   {0}".format(Hero.JUNKRAT),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.LUCIO in whiteAndBlackList],"   {0}".format(Hero.LUCIO),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.MCCREE in whiteAndBlackList],"   {0}".format(Hero.MCCREE),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.MEI in whiteAndBlackList],"   {0}".format(Hero.MEI),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.MERCY in whiteAndBlackList],"   {0}".format(Hero.MERCY),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.MOIRA in whiteAndBlackList],"   {0}".format(Hero.MOIRA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ORISA in whiteAndBlackList],"   {0}".format(Hero.ORISA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.PHARAH in whiteAndBlackList],"   {0}".format(Hero.PHARAH),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.REAPER in whiteAndBlackList],"   {0}".format(Hero.REAPER),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.REINHARDT in whiteAndBlackList],"   {0}".format(Hero.REINHARDT),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ROADHOG in whiteAndBlackList],"   {0}".format(Hero.ROADHOG),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.SIGMA in whiteAndBlackList],"   {0}".format(Hero.SIGMA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.SOLDIER in whiteAndBlackList],"   {0}".format(Hero.SOLDIER),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.SOMBRA in whiteAndBlackList],"   {0}".format(Hero.SOMBRA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.SYMMETRA in whiteAndBlackList],"   {0}".format(Hero.SYMMETRA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.TORBJORN in whiteAndBlackList],"   {0}".format(Hero.TORBJORN),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.TRACER in whiteAndBlackList],"   {0}".format(Hero.TRACER),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.WIDOWMAKER in whiteAndBlackList],"   {0}".format(Hero.WIDOWMAKER),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.WINSTON in whiteAndBlackList],"   {0}".format(Hero.WINSTON),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZARYA in whiteAndBlackList],"   {0}".format(Hero.ZARYA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZENYATTA in whiteAndBlackList],"   {0}".format(Hero.ZENYATTA),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
