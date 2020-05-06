@@ -5,6 +5,7 @@ V0.7    2020年5月6日01:37:36 9D1MH -> GR3QR(去注释)
 V0.701  2020年5月6日08:44:05 X3B05(去注释)
 V0.702  2020年5月6日10:07:37 8SD5Q(去注释)
 V0.703  2020年5月6日10:32:30 R59E5(去注释)
+V0.704  2020年5月6日18:32:30 9BZM0(去注释)
 '''
 #GLobal privte
 globalvar i
@@ -249,7 +250,7 @@ if gameMode>=2 and gameMode <=3:
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZENYATTA in whiteAndBlackList],"   {0}".format(Hero.ZENYATTA),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 #右侧
 hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"游戏快捷键信息",HudPosition.RIGHT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"更换英雄        =     互动 + 换弹",HudPosition.RIGHT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"更换英雄    =         互动 + 换弹",HudPosition.RIGHT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"重新查看欢迎信息     = 互动 + 跳 + 左键",HudPosition.RIGHT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 @Rule "[多行文本]快捷键提示(每个玩家)"
 @Event eachPlayer
