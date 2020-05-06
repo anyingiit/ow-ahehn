@@ -33,6 +33,7 @@ playervar allowKillLimit
 playervar deathCause #[1]自杀 [2]被杀手暗杀 [3]在暗杀名单被在暗杀名单玩家击杀 [4]在暗杀名单被非暗杀名单玩家击杀
 playervar firstInGameTips
 playervar findShortcut
+playervar reelectHero
 #Subroutine Names
 
 
@@ -121,7 +122,11 @@ elif victim.inHitList and attacker.inHitList:
     victim.deathCause = 3
 elif victim.inHitList and not attacker.inHitList:
     victim.deathCause = 4
-
+@Rule "玩家正在换英雄操作, 并且玩家死亡"
+@Event playerDied
+if victim.reelectHero:
+    victim.setRespawnTime(0.5)
+    victim.reelectHero = false
 @Rule "白名单模式-玩家使用白名单英雄"
 @Event eachPlayer
 if gameMode == 2 and eventPlayer.getCurrentHero() in whiteAndBlackList:
@@ -165,9 +170,29 @@ if eventPlayer.inHitList and eventPlayer.allowKillLimit > 0 and eventPlayer.isHo
     eventPlayer.allowKillLimit-=1
     smallMessage(eventPlayer,"[{0}/{1}]".format(eventPlayer.allowKillLimit,PlayerMaxPower))
 
+@Rule "[热键]更换英雄"
+@Event eachPlayer
+if  not eventPlayer.isInSpawnRoom() and not eventPlayer.reelectHero and eventPlayer.isHoldingButton(Button.INTERACT) and eventPlayer.isHoldingButton(Button.RELOAD):
+    smallMessage(eventPlayer,"您正在进行换英雄操作, 请继续长按")
+    wait(1.5,Wait.ABORT_WHEN_FALSE)
+    eventPlayer.setRespawnTime(10)
+    wait(0.1)
+    smallMessage(eventPlayer,"操作成功!")
+    wait(1.0)
+    smallMessage(eventPlayer,"死亡后, 您将获得10秒的更换英雄时间!")
+    eventPlayer.reelectHero = true
+
+@Rule "[热键]重新显示欢迎语"
+@Event eachPlayer
+if eventPlayer.isHoldingButton(Button.INTERACT) and eventPlayer.isHoldingButton(Button.JUMP) and eventPlayer.isHoldingButton(Button.PRIMARY_FIRE):
+    smallMessage(eventPlayer,"您正在重置欢迎语, 请继续长按")
+    wait(1.5,Wait.ABORT_WHEN_FALSE)
+    eventPlayer.firstInGameTips = false
+    smallMessage(eventPlayer,"欢迎语重置成功!")
 @Rule "玩家进场欢迎语"
 @Event eachPlayer
-if eventPlayer.isInSpawnRoom() and not eventPlayer.firstInGameTips:
+if eventPlayer.getCurrentHero() and not eventPlayer.firstInGameTips:
+    wait(1)
     smallMessage(eventPlayer,"欢迎您进入无修练枪房!!!")
     wait(1.5)
     smallMessage(eventPlayer,"请您在正式游玩之前时候仔细检查房间各项设置, 谨防篡改!")
@@ -186,6 +211,7 @@ if victim.deathCause == 2:
     smallMessage(victim,"您刚刚被他人暗杀...")
 @Rule "[多行文本]快捷键提示(全局)"
 @Event global
+#左侧
 hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"当前游戏模式:{0}{1}".format("(自动)" if GameDefaultMode == 0 else "", "正常模式" if gameMode == 1 else null + "白名单模式" if gameMode == 2 else null + "黑名单模式" if gameMode == 3 else null),HudPosition.LEFT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 if gameMode>=2 and gameMode <=3:
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"{0}列表:".format("白名单" if gameMode == 2 else null + "黑名单" if gameMode == 3 else null),HudPosition.LEFT,9,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
@@ -221,9 +247,13 @@ if gameMode>=2 and gameMode <=3:
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.WINSTON in whiteAndBlackList],"   {0}".format(Hero.WINSTON),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZARYA in whiteAndBlackList],"   {0}".format(Hero.ZARYA),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZENYATTA in whiteAndBlackList],"   {0}".format(Hero.ZENYATTA),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-
+#右侧
+hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"游戏快捷键信息",HudPosition.RIGHT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"更换英雄        =     互动 + 换弹",HudPosition.RIGHT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"重新查看欢迎信息     = 互动 + 跳 + 左键",HudPosition.RIGHT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 @Rule "[多行文本]快捷键提示(每个玩家)"
 @Event eachPlayer
+#左侧
 hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"您的剩余力量:[{0}]".format(eventPlayer.allowKillLimit if eventPlayer.allowKillLimit > 0 else "无"),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"力量触发快捷键:< {0} >".format("互动键(F) + 左键 + 右键" if eventPlayer.findShortcut else "未发现"),HudPosition.LEFT,3,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 
