@@ -1,7 +1,8 @@
 '''
 更新记录
 V0.68   2020年5月6日01:05:55 EJNJE
-V0.7    2020年5月6日01:37:36 9D1MH
+V0.7    2020年5月6日01:37:36 9D1MH -> GR3QR(去注释)
+V0.701  2020年5月6日08:44:05 X3B05
 '''
 #GLobal privte
 globalvar i
@@ -67,7 +68,7 @@ PlayerMaxPower = 3
 #数组初始化
 whiteAndBlackList = []
 #文本初始化
-hudSubtext([p for p in getAllPlayers() if not p.isHoldingButton(Button.INTERACT)],"按下互动键(F)查看快捷键说明",HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+hudSubtext([p for p in getAllPlayers() if not p.isHoldingButton(Button.INTERACT)],"按下互动键(F)查看游戏状态信息",HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 hudSubtext(getAllPlayers(),"作者:由我来守护你#51421",HudPosition.TOP,0,Color.WHITE,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 #游戏模式类型初始化
 gameMode = random.randint(1,3) if GameDefaultMode == 0 else GameDefaultMode
@@ -146,7 +147,7 @@ if victim.inHitList and victim.deathCause == 3:
         victim.allowKillLimit++
         smallMessage(victim,"您的某种力量被激发了...")
     else:
-        smallMessage(victim,"您的某种已达上限...")
+        smallMessage(victim,"您的某种力量已达上限...")
 
 @Rule "[热键]暗杀名单内玩家击杀所有暗杀名单玩家"
 @Event eachPlayer
