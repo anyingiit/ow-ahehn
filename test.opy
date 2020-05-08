@@ -1,5 +1,28 @@
-globalvar testArray
+globalvar test
+globalvar test1
 
-@Rule "测试"
-@Event global
-hudSubtext(hostPlayer,"{0},{1}".format(1,2),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+rule "init":
+    @Condition test == 1
+    @Event global
+    test = 0
+    test1 = 0
+rule "switch problem":
+    @Event global
+    switch(test):
+        case 0:
+            pass
+            break
+        case 1:
+            pass
+            break
+        case 2:
+            pass
+            break
+        case 3:
+            switch(test):
+                case 0:
+                    pass
+                    break
+                case 1:
+                    pass
+                    break
