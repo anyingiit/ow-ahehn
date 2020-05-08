@@ -1,4 +1,4 @@
-'''
+/*
 更新记录
 V0.68   2020年5月6日01:05:55 EJNJE
 V0.7    2020年5月6日01:37:36 9D1MH -> GR3QR(去注释)
@@ -6,7 +6,9 @@ V0.701  2020年5月6日08:44:05 X3B05(去注释)
 V0.702  2020年5月6日10:07:37 8SD5Q(去注释)
 V0.703  2020年5月6日10:32:30 R59E5(去注释)
 V0.704  2020年5月6日18:32:30 9BZM0(去注释)
-'''
+V0.705  2020年5月8日13:37:52 2R7A1(去注释)
+V0.705  2020年5月8日18:45:01 (WARNING, 该版本受到编辑器影响未正确发布!)
+*/
 #GLobal privte
 globalvar i
 globalvar j
@@ -26,10 +28,12 @@ globalvar WhiteAndBlackListDftMaxLength
 globalvar WhiteListDefaultMaxLength
 globalvar BlackListDefaultMaxLength
 globalvar PlayerMaxPower
+globalvar KillerKillKillerTips
+globalvar KillerDiedOfKillerKillTips
 
 #Player variables
 playervar inHitList
-playervar isKillerKill
+playervar isKillerBatchKill
 playervar allowKillLimit
 playervar deathCause #[1]自杀 [2]被杀手暗杀 [3]在暗杀名单被在暗杀名单玩家击杀 [4]在暗杀名单被非暗杀名单玩家击杀
 playervar firstInGameTips
@@ -51,7 +55,7 @@ GameDefaultMode = 0
 @Event global
 WhiteListAndBlackListShiftType = 0
 
-@Rule "[自定义]白名单&黑名单默认最大人数: [0]随机 (默认)[>0]使用该值"
+@Rule "[自定义]白名单&黑名单默认最大人数: [0]随机 (默认3)[>0]使用该值"
 @Event global
 WhiteAndBlackListDftMaxLength = 3
 
@@ -63,9 +67,17 @@ WhiteListDefaultMaxLength = 0
 @Event global
 BlackListDefaultMaxLength = 0
 
-@Rule "[自定义]玩家最大可储藏权力"
+@Rule "[自定义]玩家最大可储藏权力: (默认3)[>0]使用该值"
 @Event global
 PlayerMaxPower = 3
+
+@Rule "[自定义]杀手击杀杀手提示: [真]提示 (默认)[假]不提示"
+@Event global
+KillerKillKillerTips = false
+
+@Rule "[自定义]杀手被杀手击杀提示: (默认)[真]提示 [假]不提示"
+@Event global
+KillerDiedOfKillerKillTips = true
 
 @Rule "初始化"
 @Event global
@@ -114,10 +126,10 @@ if gameMode >=2 and gameMode <=3:
             break
 @Rule "玩家死亡类型鉴定"
 @Event playerDied
-if attacker == victim and not victim.isKillerKill:
+if attacker == victim and not victim.isKillerBatchKill:
     victim.deathCause = 1
-elif attacker == victim and victim.isKillerKill:
-    victim.isKillerKill = false
+elif attacker == victim and victim.isKillerBatchKill:
+    victim.isKillerBatchKill = false
     victim.deathCause = 2
 elif victim.inHitList and attacker.inHitList:
     victim.deathCause = 3
@@ -148,12 +160,15 @@ if gameMode == 3 and eventPlayer.getCurrentHero() in whiteAndBlackList:
 if gameMode == 3 and not eventPlayer.getCurrentHero() in whiteAndBlackList:
     eventPlayer.inHitList = false
 
-@Rule "在暗杀名单内玩家死亡获得权力"
+@Rule "在暗杀名单内玩家死亡获得权力,并提示玩家力量触发"
 @Event playerDied
 if victim.inHitList and victim.deathCause == 3:
     if victim.allowKillLimit < PlayerMaxPower:
         victim.allowKillLimit++
-        smallMessage(victim,"您的某种力量被激发了...")
+        if KillerDiedOfKillerKillTips:
+            smallMessage(victim,"您的某种力量似乎被激发了...")
+        if KillerKillKillerTips:
+            smallMessage(attacker,"他的力量似乎被激发了...")
     else:
         smallMessage(victim,"您的某种力量已达上限...")
 
@@ -167,7 +182,7 @@ if eventPlayer.inHitList and eventPlayer.allowKillLimit > 0 and eventPlayer.isHo
     for i in range(0,len(getAllPlayers())):
         if getAllPlayers()[i].inHitList:
             kill(getAllPlayers()[i],null)
-            getAllPlayers()[i].isKillerKill = true
+            getAllPlayers()[i].isKillerBatchKill = true
     eventPlayer.allowKillLimit-=1
     smallMessage(eventPlayer,"[{0}/{1}]".format(eventPlayer.allowKillLimit,PlayerMaxPower))
 
@@ -205,11 +220,12 @@ if eventPlayer.getCurrentHero() and not eventPlayer.firstInGameTips:
     smallMessage(eventPlayer,"游戏准备完毕, 祝您游玩愉快!")
     eventPlayer.firstInGameTips = true
     
-@Rule "玩家被杀手杀死提示"
+@Rule "玩家被杀手使用力量批量击杀"
 @Event playerDied
 if victim.deathCause == 2:
     wait(2.5)
     smallMessage(victim,"您刚刚被他人暗杀...")
+
 @Rule "[多行文本]快捷键提示(全局)"
 @Event global
 #左侧
@@ -255,7 +271,9 @@ hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"�
 @Rule "[多行文本]快捷键提示(每个玩家)"
 @Event eachPlayer
 #左侧
-hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"您的剩余力量:[{0}]".format(eventPlayer.allowKillLimit if eventPlayer.allowKillLimit > 0 else "无"),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"力量触发快捷键:< {0} >".format("互动键(F) + 左键 + 右键" if eventPlayer.findShortcut else "未发现"),HudPosition.LEFT,3,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+if gameMode>=2 and gameMode <=3:
+    hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"您的剩余力量:[{0}]".format(eventPlayer.allowKillLimit if eventPlayer.allowKillLimit > 0 else "无"),HudPosition.LEFT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([eventPlayer if eventPlayer.isHoldingButton(Button.INTERACT) else null],"力量触发快捷键:< {0} >".format("互动键(F) + 左键 + 右键" if eventPlayer.findShortcut else "未发现"),HudPosition.LEFT,3,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 
 #TODO: 点子 玩家被击杀后可以选择复仇 但是代价将会把一个或多个队友杀死
+#TODO: 鉴挂模式
