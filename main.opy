@@ -8,7 +8,30 @@ V0.703  2020年5月6日10:32:30 R59E5(去注释)
 V0.704  2020年5月6日18:32:30 9BZM0(去注释)
 V0.705  2020年5月8日13:37:52 2R7A1(去注释)
 V0.705  2020年5月8日18:45:01 (WARNING, 该版本受到编辑器影响未正确发布!)
+V0.706  2020年5月8日18:45:01 (WARNING, 该版本受到编辑器影响未正确发布!)
 */
+#!obfuscate
+settings {
+    "main": {
+        "description": "无修练枪 - 人性版[ver0.706]                                                                                                   1. 在您或他人做出决定前,该房不会和普通练枪房有任何区别                                                            2. 开发者: 由我来守护你#51421                                                                                                                                3. 该版本发布日期2020-5-9 21:00:40"
+    },
+    "lobby": {
+        "allowPlayersInQueue": true,
+        "mapRotation": "afterGame",
+        "spectatorSlots": 12,
+        "returnToLobby": "never",
+        "teamBalancing": "afterGame"
+    },
+    "gamemodes": {
+        "skirmish": {},
+        "general": {
+            "gamemodeStartTrigger": "immediately",
+            "healthPackRespawnTime%": 40,
+            "heroLimit": "2PerTeam",
+            "respawnTime%": 0
+        }
+    }
+}
 #GLobal privte
 globalvar i
 globalvar j
@@ -19,10 +42,10 @@ globalvar gameMode
 globalvar hitList
 globalvar whiteAndBlackList
 globalvar whiteListAndBlackListMaxLength
-
+globalvar allowAnyLocationSwitchHeros
 
 #Global Config
-globalvar GameDefaultMode /*[0-defalt]auto [1]normal [2]whiteList [3]blackList*/
+globalvar GameDefaultMode #[0-defalt]auto [1]normal [2]whiteList [3]blackList
 globalvar WhiteListAndBlackListShiftType
 globalvar WhiteAndBlackListDftMaxLength
 globalvar WhiteListDefaultMaxLength
@@ -30,15 +53,15 @@ globalvar BlackListDefaultMaxLength
 globalvar PlayerMaxPower
 globalvar KillerKillKillerTips
 globalvar KillerDiedOfKillerKillTips
+globalvar WhichMapAnytimeSwitchHeros
 
 #Player variables
 playervar inHitList
 playervar isKillerBatchKill
 playervar allowKillLimit
-playervar deathCause /*[1]自杀 [2]被杀手暗杀 [3]在暗杀名单被在暗杀名单玩家击杀 [4]在暗杀名单被非暗杀名单玩家击杀*/
+playervar deathCause #[1]自杀 [2]被杀手暗杀 [3]在暗杀名单被在暗杀名单玩家击杀 [4]在暗杀名单被非暗杀名单玩家击杀
 playervar firstInGameTips
 playervar findShortcut
-playervar reelectHero
 #Subroutine Names
 
 
@@ -79,6 +102,10 @@ rule "[自定义]杀手被杀手击杀提示: (默认)[真]提示 [假]不提示
     @Event global
     KillerDiedOfKillerKillTips = true
 
+rule "[自定义]允许在什么地图随时切换英雄: (默认)[0]在没有重生室的地图(如创意工坊地图) [1]在任何地图":
+    @Event global
+    WhichMapAnytimeSwitchHeros = 0
+
 rule "初始化":
     @Event global
     #数组初始化
@@ -88,6 +115,9 @@ rule "初始化":
     hudSubtext(getAllPlayers(),"作者:由我来守护你#51421",HudPosition.TOP,0,Color.WHITE,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     #游戏模式类型初始化
     gameMode = random.randint(1,3) if GameDefaultMode == 0 else GameDefaultMode
+    #允许在任何地点切换英雄初始化
+    allowAnyLocationSwitchHeros = ((getCurrentMap() == Map.WORKSHOP_CHAMBER or getCurrentMap() == Map.WORKSHOP_EXPANSE or getCurrentMap() == Map.WORKSHOP_ISLAND) if WhichMapAnytimeSwitchHeros == 0 else false) or (
+        (true) if WhichMapAnytimeSwitchHeros == 1 else false)
     #游戏模式初始化
     if gameMode >=2 and gameMode <=3:
         #构建最大黑白名单人名数量
@@ -104,13 +134,16 @@ rule "初始化":
             case 0:
                 for i in range(1,(3 + 1)):
                     for j in range(1,(whiteListAndBlackListMaxLength / 3) + 1):
-                        if i == 1:
-                            k = random.choice(getTankHeroes())
-                        elif i == 2:
-                            k = random.choice(getDamageHeroes())
-                        elif i == 3:
-                            k = random.choice(getSupportHeroes())
-
+                        switch(i):
+                            case 1:
+                                k = random.choice(getTankHeroes())
+                                break
+                            case 2:
+                                k = random.choice(getDamageHeroes())
+                                break
+                            case 3:
+                                k = random.choice(getSupportHeroes())
+                                break
                         if not k in whiteAndBlackList:
                             whiteAndBlackList.append(k)
                         else:
@@ -135,11 +168,6 @@ rule "玩家死亡类型鉴定":
         victim.deathCause = 3
     elif victim.inHitList and not attacker.inHitList:
         victim.deathCause = 4
-rule "玩家正在换英雄操作, 并且玩家死亡":
-    @Event playerDied
-    @Condition victim.reelectHero
-        victim.setRespawnTime(0.5)
-        victim.reelectHero = false
 rule "白名单模式-玩家使用白名单英雄":
     @Event eachPlayer
     @Condition gameMode == 2 and eventPlayer.getCurrentHero() in whiteAndBlackList
@@ -188,15 +216,14 @@ rule "[热键]暗杀名单内玩家击杀所有暗杀名单玩家":
 
 rule "[热键]更换英雄":
     @Event eachPlayer
-    @Condition not eventPlayer.isInSpawnRoom() and not eventPlayer.reelectHero and eventPlayer.isHoldingButton(Button.INTERACT) and eventPlayer.isHoldingButton(Button.RELOAD)
+    @Condition not eventPlayer.isInSpawnRoom() and allowAnyLocationSwitchHeros and eventPlayer.isHoldingButton(Button.INTERACT) and eventPlayer.isHoldingButton(Button.RELOAD)
         smallMessage(eventPlayer,"您正在进行换英雄操作, 请继续长按")
         wait(1.5,Wait.ABORT_WHEN_FALSE)
-        eventPlayer.setRespawnTime(10)
-        wait(0.1)
-        smallMessage(eventPlayer,"操作成功!")
-        wait(1.0)
-        smallMessage(eventPlayer,"死亡后, 您将获得10秒的更换英雄时间!")
-        eventPlayer.reelectHero = true
+        eventPlayer.setAllowedHeroes(random.choice(eventPlayer.getAllowedHeroes().exclude(eventPlayer.getCurrentHero())))
+        wait(0.5)
+        eventPlayer.setAllowedHeroes(getAllHeroes().exclude(eventPlayer.getAllowedHeroes()))
+        wait(0.5)
+        eventPlayer.resetHeroAvailability()
 
 rule "[热键]重新显示欢迎语":
     @Event eachPlayer
@@ -229,9 +256,9 @@ rule "玩家被杀手使用力量批量击杀":
 rule "[多行文本]快捷键提示(全局)":
     @Event global
     #左侧
-    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"当前游戏模式:{0}{1}".format("(自动)" if GameDefaultMode == 0 else "", "正常模式" if gameMode == 1 else null + "白名单模式" if gameMode == 2 else null + "黑名单模式" if gameMode == 3 else null),HudPosition.LEFT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"当前游戏模式:{0}{1}".format("(自动)" if GameDefaultMode == 0 else "", "正常模式" if gameMode == 1 else "白名单模式" if gameMode == 2 else "黑名单模式" if gameMode == 3 else null),HudPosition.LEFT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     if gameMode>=2 and gameMode <=3:
-        hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"{0}列表:".format("白名单" if gameMode == 2 else null + "黑名单" if gameMode == 3 else null),HudPosition.LEFT,9,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+        hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"{0}列表:".format("白名单" if gameMode == 2 else "黑名单" if gameMode == 3 else null),HudPosition.LEFT,9,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
         hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ANA in whiteAndBlackList],"   {0}".format(Hero.ANA),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
         hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ASHE in whiteAndBlackList],"   {0}".format(Hero.ASHE),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
         hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.BAPTISTE in whiteAndBlackList],"   {0}".format(Hero.BAPTISTE),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
@@ -266,7 +293,7 @@ rule "[多行文本]快捷键提示(全局)":
         hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and Hero.ZENYATTA in whiteAndBlackList],"   {0}".format(Hero.ZENYATTA),HudPosition.LEFT,10,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     #右侧
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"游戏快捷键信息",HudPosition.RIGHT,0,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
-    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"更换英雄    =         互动 + 换弹",HudPosition.RIGHT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
+    hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT) and allowAnyLocationSwitchHeros],"更换英雄    =         互动 + 换弹",HudPosition.RIGHT,1,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
     hudSubtext([p for p in getAllPlayers() if p.isHoldingButton(Button.INTERACT)],"重新查看欢迎信息     = 互动 + 跳 + 左键",HudPosition.RIGHT,2,Color.YELLOW,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
 rule "[多行文本]快捷键提示(每个玩家)":
     @Event eachPlayer
