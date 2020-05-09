@@ -207,7 +207,7 @@ rule "[热键]重新显示欢迎语":
         smallMessage(eventPlayer,"欢迎语重置成功!")
 rule "玩家进场欢迎语":
     @Event eachPlayer
-    @Condition eventPlayer.getCurrentHero() and not eventPlayer.firstInGameTips
+    @Condition eventPlayer.getCurrentHero() != null and not eventPlayer.firstInGameTips
         wait(1)
         smallMessage(eventPlayer,"欢迎您进入无修练枪房!!!")
         wait(1.5)
