@@ -1,28 +1,29 @@
+#!obfuscate
+settings {
+    "main": {
+        "description": "Test"
+    },
+    "lobby": {
+        "allowPlayersInQueue": true,
+        "mapRotation": "afterGame",
+        "spectatorSlots": 12,
+        "returnToLobby": "never",
+        "teamBalancing": "afterGame"
+    },
+    "gamemodes": {
+        "skirmish": {},
+        "general": {
+            "gamemodeStartTrigger": "immediately",
+            "healthPackRespawnTime%": 40,
+            "heroLimit": "2PerTeam",
+            "respawnTime%": 0
+        }
+    }
+}
 globalvar test
 globalvar test1
 
-rule "init":
-    @Condition test == 1
+rule "No normal removal":
     @Event global
-    test = 0
-    test1 = 0
-rule "switch problem":
-    @Event global
-    switch(test):
-        case 0:
-            pass
-            break
-        case 1:
-            pass
-            break
-        case 2:
-            pass
-            break
-        case 3:
-            switch(test):
-                case 0:
-                    pass
-                    break
-                case 1:
-                    pass
-                    break
+    #No normal removal
+    test = true
