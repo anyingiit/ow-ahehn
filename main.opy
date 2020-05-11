@@ -116,7 +116,11 @@ rule "初始化":
     #游戏模式类型初始化
     gameMode = random.randint(1,3) if GameDefaultMode == 0 else GameDefaultMode
     #允许在任何地点切换英雄初始化
-    allowAnyLocationSwitchHeros = ((getCurrentMap() == Map.WORKSHOP_CHAMBER or getCurrentMap() == Map.WORKSHOP_EXPANSE or getCurrentMap() == Map.WORKSHOP_ISLAND) if WhichMapAnytimeSwitchHeros == 0 else false) or (
+    allowAnyLocationSwitchHeros = ((getCurrentMap() == Map.WORKSHOP_CHAMBER or 
+    getCurrentMap() == Map.WORKSHOP_EXPANSE or 
+    getCurrentMap() == Map.WORKSHOP_EXPANSE_NIGHT or 
+    getCurrentMap() == Map.WORKSHOP_ISLAND  or 
+    getCurrentMap() == Map.WORKSHOP_ISLAND_NIGHT) if WhichMapAnytimeSwitchHeros == 0 else false) or (
         (true) if WhichMapAnytimeSwitchHeros == 1 else false)
     #游戏模式初始化
     if gameMode >=2 and gameMode <=3:
@@ -164,7 +168,7 @@ rule "玩家死亡类型鉴定":
     elif attacker == victim and victim.isKillerBatchKill:
         victim.isKillerBatchKill = false
         victim.deathCause = 2
-    elif victim.inHitList and attacker.inHitList:
+    elif victim.inHitList and attacker.inHitList: #可以多加一个判定, 判定攻击者不是自己
         victim.deathCause = 3
     elif victim.inHitList and not attacker.inHitList:
         victim.deathCause = 4
@@ -232,7 +236,7 @@ rule "[热键]重新显示欢迎语":
         wait(1.5,Wait.ABORT_WHEN_FALSE)
         eventPlayer.firstInGameTips = false
         smallMessage(eventPlayer,"欢迎语重置成功!")
-rule "玩家进场欢迎语":
+rule "玩家进场欢迎语": #TODO: 增加可以使用随时更换英雄的地图, 提示可以更换英雄的信息
     @Event eachPlayer
     @Condition eventPlayer.getCurrentHero() != null and not eventPlayer.firstInGameTips
         wait(1)

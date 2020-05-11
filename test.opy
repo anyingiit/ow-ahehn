@@ -1,4 +1,3 @@
-#!obfuscate
 settings {
     "main": {
         "description": "Test"
@@ -20,10 +19,17 @@ settings {
         }
     }
 }
-globalvar test
-globalvar test1
 
-rule "No normal removal":
+globalvar allHeros
+globalvar heros 
+globalvar i
+
+rule "gamemod choice":
     @Event global
-    #No normal removal
-    test = true
+    allHeros = []
+    heros = []
+    allHeros = getAllHeroes()
+    for i in range(0,3):
+        heros.append(random.choice(getDamageHeroes()))
+    for i in range(len(heros)):
+        hudSubtext(hostPlayer,heros[i],HudPosition.LEFT,0,Color.BLUE,HudReeval.VISIBILITY_AND_STRING,SpecVisibility.DEFAULT)
