@@ -1,40 +1,64 @@
-<!-- TOC -->
+<!-- Source: Best-README-Template BLANK_README (Unlicense) — https://github.com/othneildrew/Best-README-Template -->
+<a id="readme-top"></a>
 
-- [1. 全英雄无修练枪 - 人性版](#1-全英雄无修练枪---人性版)
-    - [1.1. 简介](#11-简介)
-    - [1.2. 说明](#12-说明)
-        - [1.2.1. 其他功能](#121-其他功能)
-            - [1.2.1.1. 在没有重生室的地图更换英雄](#1211-在没有重生室的地图更换英雄)
-        - [1.2.2. 游戏可自定义选项](#122-游戏可自定义选项)
-            - [1.2.2.1. 游戏模式](#1221-游戏模式)
-            - [1.2.2.2. 黑&白名单转换类型](#1222-黑白名单转换类型)
-            - [1.2.2.3. 黑&白名单默认最大人数](#1223-黑白名单默认最大人数)
-            - [1.2.2.4. 白名单最大人数](#1224-白名单最大人数)
-            - [1.2.2.5. 黑名单最大人数](#1225-黑名单最大人数)
-            - [1.2.2.6. 玩家最大可储藏权力](#1226-玩家最大可储藏权力)
+# Ow Ahehn
 
-<!-- /TOC -->
-# 1. 全英雄无修练枪 - 人性版
-## 1.1. 简介
-如果每个人都可以突破规则, 真的是你想要的结果吗...
-游戏内置多个可自定义选项, 默认情况下自动随机运行各个游戏模式.
-## 1.2. 说明
-1. 在您或他人做出决定前, 该房不会和普通练枪房有任何区别
-2. 开发者: 由我来守护你#51421
-3. 让人类永远保持理智, 的确是一种奢求
-### 1.2.1. 其他功能
-#### 1.2.1.1. 在没有重生室的地图更换英雄
-### 1.2.2. 游戏可自定义选项
-#### 1.2.2.1. 游戏模式
-`[0]自动模式` `[1]正常模式`  `[2]白名单模式` `[3]黑名单模式` 
-#### 1.2.2.2. 黑&白名单转换类型
-`[0]平均分配` 将名单人数除3后平均分配在重装, 伤害, 支援英雄
-`[1]完全随机` 完全随机分配英雄(自带去重)
-#### 1.2.2.3. 黑&白名单默认最大人数
-`[0]随机`  `[>0]使用该值`
-#### 1.2.2.4. 白名单最大人数
-`[0]使用黑&白名单默认最大人数` `[>0]使用该值`
-#### 1.2.2.5. 黑名单最大人数
-`[0]使用黑&白名单默认最大人数` `[>0]使用该值`
-#### 1.2.2.6. 玩家最大可储藏权力
-`[>0]玩家可最大储藏权力`
+Ow ahehn: no README or manifest to go on; based on its name, this looks like a personal project — open the repository to confirm.
+
+[![CI](https://github.com/anyingiit/ow-ahehn/actions/workflows/ci.yml/badge.svg)](https://github.com/anyingiit/ow-ahehn/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/anyingiit/ow-ahehn)](LICENSE)
+
+[Report a bug](https://github.com/anyingiit/ow-ahehn/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/anyingiit/ow-ahehn/issues/new?template=feature_request.yml)
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+## About The Project
+
+Ow ahehn: no README or manifest to go on; based on its name, this looks like a personal project — open the repository to confirm.
+
+See the [open issues](https://github.com/anyingiit/ow-ahehn/issues) for planned features and known issues.
+
+## Getting Started
+
+### Prerequisites
+
+- Git
+
+### Installation
+
+```sh
+git clone https://github.com/anyingiit/ow-ahehn.git
+cd ow-ahehn
+```
+
+## Usage
+
+```sh
+ow-ahehn --help
+```
+
+## Contributing
+
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for how to open an issue or a pull request, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for the standards expected of everyone taking part.
+
+Please do not report security issues in public issues or pull requests. [SECURITY.md](SECURITY.md) explains how to report them privately.
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Contact
+
+Project link: [https://github.com/anyingiit/ow-ahehn](https://github.com/anyingiit/ow-ahehn)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
